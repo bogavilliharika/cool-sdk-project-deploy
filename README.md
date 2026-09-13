@@ -1,389 +1,327 @@
 # CooL SDK Project
-##Problem Statement
 
-AI-powered applications can produce decisions, actions, and outputs that
-are difficult to verify or trust. Simply displaying an AI-generated
-result does not provide enough evidence to determine whether the
-underlying execution or information has been changed.
+## Problem Statement
 
-CooL explores a verifiable evidence workflow for AI executions by
-creating evidence records that can be checked later while representing
-sensitive payloads through cryptographic commitments.
+AI-powered applications can produce decisions, actions, and outputs that users may find difficult to verify or trust. Simply displaying an AI-generated result does not provide enough evidence to determine whether the underlying information or execution has been changed.
 
-##What I Built
+This project explores a verifiable evidence workflow for AI executions. The goal is to create evidence records that allow important execution information to be checked later while keeping sensitive payload information represented through a cryptographic commitment rather than directly exposing it as the evidence record.
 
-CooL SDK Project is a browser-based prototype of a verifiable
-evidence console for AI executions.
+---
+
+## What I Built
+
+**CooL SDK Project** is a browser-based prototype that demonstrates a verifiable evidence console for AI executions.
 
 The prototype allows users to:
 
-Record an AI execution or application event.
+* Record an AI execution or application event.
+* Enter software/model identity, event type, target, actor, and action information.
+* Provide a private payload.
+* Generate a **SHA-256 cryptographic commitment** for the recorded information.
+* Create an evidence receipt containing the execution metadata and commitment.
+* View evidence records created during the browser session.
+* Verify a receipt independently against its stored commitment.
+* Detect tampering when a recorded field is changed.
+* Demonstrate signature, transparency-log, and TEE components through explicit prototype adapters.
 
-Enter software/model identity, event type, target, actor, and action
-information.
+The prototype provides five main areas:
 
-Provide a private payload.
+1. **Evidence Overview** – View evidence records, verification status, commitments, and detected alterations.
+2. **Record Execution** – Create a new AI execution evidence receipt.
+3. **Evidence Records** – View recorded evidence from the current browser session.
+4. **Verify Receipt** – Check whether a receipt matches its SHA-256 commitment.
+5. **Tamper Check** – Modify a recorded field and demonstrate that the resulting commitment no longer matches.
 
-Generate a SHA-256 cryptographic commitment.
+---
 
-Create a structured JSON evidence receipt.
+## How CooL SDK Is Used
 
-View evidence records created in the browser.
+CooL is used as the conceptual foundation for the evidence and verification workflow demonstrated by this prototype.
 
-Verify evidence against its stored commitment.
+The prototype models the CooL evidence workflow around an AI application execution:
 
-Detect changes to recorded information.
+**AI Application → Evidence Record → Cryptographic Commitment → Verification / Evidence Adapters → Independent Verification**
 
-Explore future signature, transparency-log, and TEE integrations
-through prototype adapters.
+The current prototype implementation is intentionally lightweight and browser-based. The SHA-256 commitment is generated using the browser's Web Crypto API.
 
-The prototype includes five main areas:
+The prototype also contains explicit adapters representing:
 
-Evidence Overview -- View evidence records, commitments,
-verification status, and detected alterations.
+* **Ed25519 signatures**
+* **ML-DSA-65 signatures**
+* **RFC 6962-style transparency-log inclusion**
+* **TEE attestation using dstack / Intel TDX metadata**
 
-Record Execution -- Create a new AI execution evidence record.
+These components are represented as prototype adapters rather than production cryptographic or infrastructure integrations. This makes the prototype useful for demonstrating the intended CooL evidence workflow while keeping the implementation simple and easy to run.
 
-Evidence Records -- Inspect records created during the current
-browser session.
+---
 
-Verify Receipt -- Check whether a receipt matches its SHA-256
-commitment.
+## Why CooL Is Important
 
-Tamper Check -- Modify a recorded field and observe how the
-commitment changes.
+Trust is important for applications that use AI to make decisions, perform actions, or generate information.
 
-##How CooL SDK Is Used
+A normal application can show an AI result, but users may still have difficulty determining:
 
-CooL provides the conceptual foundation for recording and verifying
-evidence generated during an AI application execution.
+* What execution produced the result.
+* Whether important execution information was changed.
+* Whether the evidence corresponds to the original data.
+* Whether the recorded evidence can be independently verified.
 
-#The workflow is:
+CooL is important to this solution because it provides the foundation for treating **verifiable evidence as part of the product workflow** rather than simply displaying information.
 
+In this prototype, the evidence workflow demonstrates how an execution can be represented by a cryptographic commitment and later checked for integrity. This provides a clearer path toward transparent and independently verifiable AI application behavior.
+
+---
+
+## Features
+
+### 1. AI Execution Recording
+
+Users can record an execution by providing:
+
+* Software / model identity
+* Event type
+* Tool / target
+* Actor
+* Action metadata
+* Private payload
+
+### 2. SHA-256 Commitment
+
+The prototype creates a SHA-256 commitment from the recorded execution information.
+
+The commitment allows the integrity of the recorded fields to be checked without requiring the evidence interface to expose the payload as ordinary evidence data.
+
+### 3. Evidence Receipt
+
+A structured JSON evidence receipt is generated containing information such as:
+
+* Event ID
+* Timestamp
+* Software / model
+* Event type
+* Target
+* Actor
+* Action
+* SHA-256 payload commitment
+* Signature adapter information
+* Transparency adapter information
+* TEE attestation adapter information
+
+### 4. Independent Verification
+
+A receipt can be pasted into the verification interface and checked against its stored SHA-256 commitment.
+
+If the recorded fields reproduce the expected commitment, the receipt is reported as verified.
+
+If a field has been changed, the commitment no longer matches and the receipt is reported as tampered or invalid.
+
+### 5. Tamper Detection
+
+The Tamper Check feature allows a recorded action to be changed deliberately.
+
+The prototype calculates a new SHA-256 commitment and compares it with the original commitment. A mismatch demonstrates how an alteration can be detected.
+
+---
+
+## How to Run the Project
+
+### Prerequisites
+
+You only need:
+
+* A modern web browser such as Google Chrome, Microsoft Edge, or Firefox.
+* Git, if you want to clone the repository.
+
+No backend server or database is required for the current prototype.
+
+### Option 1: Clone and Open Directly
+
+Clone the repository:
+
+```bash
+git clone https://github.com/bogavilliharika/cool-sdk-project.git
+```
+
+Move into the project directory:
+
+```bash
+cd cool-sdk-project
+```
+
+Open the prototype HTML file in a modern web browser.
+
+### Option 2: Download the Repository
+
+1. Download or clone the repository from GitHub.
+2. Locate the prototype HTML file.
+3. Open the HTML file in a modern web browser.
+4. The CooL Evidence Console will load locally.
+
+### Testing the Prototype
+
+After opening the application:
+
+1. Go to **Record Execution**.
+2. Enter or modify the execution information.
+3. Click **Create Evidence Receipt**.
+4. A SHA-256 commitment and evidence receipt will be generated.
+5. Open **Verify Receipt**.
+6. Load or paste the generated receipt.
+7. Click **Verify Receipt**.
+8. The verification result should show whether the commitment matches.
+9. Open **Tamper Check**.
+10. Change the recorded action.
+11. Run the tamper check.
+12. The prototype should report **TAMPERING DETECTED** because the modified information produces a different SHA-256 commitment.
+
+---
+
+## Architecture / Workflow
+
+The prototype follows a lightweight evidence-generation and verification architecture.
+
+### High-Level Workflow
+
+```text
 AI Application
       │
       ▼
 Execution / Event Data
       │
       ▼
-CooL Evidence Record
+CooL Evidence Workflow
+      │
+      ├── SHA-256 Commitment
+      │
+      ├── Signature Adapter
+      │
+      ├── Transparency Log Adapter
+      │
+      └── TEE Attestation Adapter
       │
       ▼
-SHA-256 Cryptographic Commitment
+Evidence Receipt
       │
       ▼
-JSON Evidence Receipt
+Independent Verification
       │
       ▼
-Verification / Tamper Check
+Verified / Tampered
+```
 
-The current prototype is lightweight and browser-based. SHA-256
-commitments are generated using the browser's Web Crypto API.
+### Workflow Steps
 
-#The receipt structure also includes prototype adapters for:
+1. **AI Application / Execution**
 
-Ed25519 signatures
+   * An AI-related execution or application event is represented.
 
-ML-DSA-65 signatures
+2. **Evidence Recording**
 
-RFC 6962-style transparency-log inclusion
+   * Execution metadata and a private payload are entered into the prototype.
 
-TEE attestation using dstack / Intel TDX metadata
+3. **Cryptographic Commitment**
 
-These adapters represent planned integration points and are not
-production cryptographic or infrastructure services.
+   * The prototype generates a SHA-256 commitment from the execution information.
 
-#Why CooL Is Important
+4. **Evidence Receipt**
 
-AI systems are increasingly used to make decisions, perform actions, and
-generate important information. Users and organizations need better ways
-to understand and verify what happened during these executions.
+   * The commitment and relevant metadata are stored in a structured evidence receipt.
 
-CooL demonstrates how evidence can help answer questions such as:
+5. **Evidence Adapters**
 
-What execution produced a result?
+   * Signature, transparency-log, and TEE components are represented through prototype adapters.
 
-Which model, software, or actor was involved?
+6. **Independent Verification**
 
-What action was performed?
+   * The receipt can be checked later to determine whether the recorded fields reproduce the original commitment.
 
-Has the recorded information changed?
+7. **Tamper Detection**
 
-Can the evidence be checked later?
+   * If the recorded information is modified, the newly calculated commitment differs from the original commitment.
 
-The project focuses on making verifiable evidence part of the AI
-application workflow, rather than treating logging as an afterthought.
+---
 
-##Features
+## Technical Decisions
 
-1. AI Execution Recording
+### Lightweight HTML-Based Implementation
 
-Users can record:
+The prototype is implemented as a lightweight HTML, CSS, and JavaScript application.
 
-Software/model identity
+This was chosen so that the product can be demonstrated easily without requiring a backend service or complex installation process.
 
-Event type
+### Browser-Based Cryptography
 
-Tool or target
+The prototype uses the browser's Web Crypto API to generate SHA-256 commitments.
 
-Actor
+This provides a real cryptographic commitment mechanism while keeping the prototype simple and self-contained.
 
-Action metadata
+### Evidence Instead of Plaintext Payload Storage
 
-Private payload
+The prototype uses a cryptographic commitment to represent the integrity of the private payload instead of relying only on displaying the payload as evidence.
 
-2. SHA-256 Commitment
+This demonstrates the concept of verifying that information has not changed without making the payload itself the primary evidence artifact.
 
-The prototype generates a SHA-256 commitment from the recorded execution
-information.
+### Adapter-Based Architecture
 
-This commitment can be recalculated later to check whether the recorded
-information has changed.
+The signature, transparency-log, and TEE components are represented as explicit prototype adapters.
 
-3. JSON Evidence Receipt
+This keeps the prototype focused on validating the product workflow while leaving room for integration with real cryptographic and infrastructure services in a future implementation.
 
-Each evidence record can include:
+### Browser Session Storage
 
-Event ID
+Evidence records are maintained using browser local storage for the prototype.
 
-Timestamp
+This avoids requiring a database while allowing multiple evidence records to be created and inspected during the demonstration.
 
-Software/model identity
+---
 
-Event type
+## Limitations
 
-Target
+The current project is a **prototype** and is not intended to be a production-ready evidence infrastructure.
 
-Actor
+Current limitations include:
 
-Action
+* The application is browser-based and uses local browser storage.
+* The SHA-256 commitment is implemented using the browser's Web Crypto API.
+* Ed25519 signatures are represented through a prototype adapter rather than a production signing service.
+* ML-DSA-65 signatures are represented through a prototype adapter.
+* RFC 6962-style transparency-log inclusion is represented through a prototype adapter.
+* TEE attestation is represented through prototype metadata rather than a live TEE attestation environment.
+* There is no production backend, distributed evidence database, or deployed transparency log.
+* The current prototype does not provide production-grade authentication, authorization, key management, or access control.
+* The prototype has been designed primarily to demonstrate and validate the product workflow.
 
-SHA-256 commitment
+---
 
-Signature adapter information
+## Future Improvements
 
-Transparency adapter information
+Future versions of the project could include:
 
-TEE attestation adapter information
+* Integrating the production CooL SDK and its supported APIs directly into the application.
+* Replacing prototype adapters with real Ed25519 and ML-DSA-65 signing infrastructure.
+* Connecting the application to a real transparency log.
+* Integrating real TEE attestation and verification.
+* Adding secure backend storage for evidence records.
+* Adding authentication and role-based access control.
+* Improving key management and secure credential handling.
+* Adding automated unit, integration, and security testing.
+* Improving the user interface and overall user experience.
+* Providing richer evidence and verification information.
+* Adding monitoring and audit capabilities.
+* Deploying the application as an online service.
+* Expanding the prototype into a production-ready verifiable evidence platform.
 
-4. Receipt Verification
+---
 
-Users can load or paste a receipt into the verification interface.
+## Project Status
 
-The prototype compares the calculated commitment with the stored
-commitment and reports whether the values match.
+**Status: Prototype / Proof of Concept**
 
-5. Tamper Detection
+The current implementation is designed to demonstrate the CooL-oriented evidence workflow, cryptographic commitment verification, evidence receipts, and tamper detection in a simple browser-based environment.
 
-The Tamper Check feature deliberately changes a recorded field, such as
-the action metadata.
+---
 
-The prototype then generates a new commitment and compares it with the
-original. A mismatch demonstrates that the recorded information has
-changed.
-
-##How to Run the Project
-
-Prerequisites
-
-You need:
-
-A modern web browser such as Google Chrome, Microsoft Edge, or
-Firefox.
-
-The CooL prototype HTML file.
-
-Git only if you want to clone the repository.
-
-No backend server or database is required for the current prototype.
-
-Option 1: Clone the Repository
-
-git clone https://github.com/bogavilliharika/cool-sdk-project.git
-cd cool-sdk-project
-
-Open the prototype HTML file in a modern browser.
-
-Option 2: Open the HTML File Directly
-
-Download the project files.
-
-Locate the CooL prototype HTML file.
-
-Open it in a modern web browser.
-
-The CooL Evidence Console will load locally.
-
-Testing the Prototype
-
-Open Record Execution.
-
-Enter the execution information.
-
-Create an evidence receipt.
-
-Open Evidence Records to inspect the record.
-
-Open Verify Receipt and load the receipt.
-
-Run the verification process.
-
-Open Tamper Check.
-
-Modify the recorded action.
-
-Run the tamper check.
-
-Confirm that the modified commitment differs from the original.
-
-##Architecture / Workflow
-
-┌──────────────────────────────┐
-│       AI Application         │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│      Execution / Event Data  │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│       CooL Evidence Flow     │
-├──────────────────────────────┤
-│ SHA-256 Commitment           │
-│ Signature Adapter            │
-│ Transparency Log Adapter     │
-│ TEE Attestation Adapter      │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│      JSON Evidence Receipt   │
-└──────────────┬───────────────┘
-               │
-               ▼
-┌──────────────────────────────┐
-│    Verification / Tamper     │
-│           Check              │
-└──────────────────────────────┘
-
-Workflow Steps
-
-Represent an AI execution
-An AI-related action or application event is recorded.
-
-Capture evidence information
-The user enters execution metadata and a private payload.
-
-Generate a commitment
-CooL creates a SHA-256 commitment from the recorded information.
-
-Create an evidence receipt
-The commitment and relevant metadata are placed into a structured
-JSON receipt.
-
-Inspect or export evidence
-Users can view, copy, import, or export receipts.
-
-Verify the evidence
-The commitment is recalculated and compared with the stored value.
-
-Check for tampering
-A modified field produces a different commitment, demonstrating
-detectable alteration.
-
-#Technical Decisions
-
-Lightweight HTML, CSS, and JavaScript
-
-The prototype is implemented as a self-contained browser application.
-
-This makes it easy to:
-
-Run locally
-
-Demonstrate the concept
-
-Inspect the implementation
-
-Share the prototype
-
-Avoid backend setup
-
-Browser-Based Cryptography
-
-The prototype uses the browser's Web Crypto API to generate SHA-256
-commitments.
-
-This provides a real hashing mechanism without requiring an external
-cryptography service.
-
-Cryptographic Commitments
-
-The project uses commitments to represent the integrity of recorded
-information instead of relying only on displaying raw payload data.
-
-Adapter-Based Design
-
-Signature, transparency-log, and TEE capabilities are represented
-through explicit prototype adapters. This keeps the current
-implementation simple while providing clear extension points for future
-integrations.
-
-Browser Storage
-
-Evidence records are maintained using browser storage for the prototype.
-This avoids requiring a database during demonstrations.
-
-##Limitations
-
-The current implementation is browser-based and uses local storage.
-
-Signature, transparency-log, and TEE features are represented by
-prototype adapters.
-
-There is no production backend, authentication system, or deployed
-evidence infrastructure.
-
-The prototype demonstrates evidence integrity and tamper detection;
-it does not prove that an AI output is correct, safe, or fair.
-
-##Future Improvements
-
-Future versions could include:
-
-Real Ed25519 and ML-DSA-65 signing.
-
-Integration with a transparency log.
-
-Live TEE attestation and verification.
-
-Secure backend evidence storage.
-
-Authentication and role-based access control.
-
-Improved key management.
-
-Automated testing.
-
-Richer evidence and verification reports.
-
-Monitoring and audit capabilities.
-
-Deployment as an online service.
-
-Integration with the production CooL SDK.
-
-Project Status
-
-Status: Prototype / Proof of Concept
-
-The current project demonstrates the CooL evidence workflow, SHA-256
-commitment generation, JSON evidence receipts, verification, and tamper
-detection in a browser-based environment.
-
-Repository
+## Repository
 
 GitHub repository:
 
