@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CooL — Evidence Console</title>
+<style>
+:root{--bg:#f5f6f8;--panel:#fff;--ink:#17191d;--muted:#737983;--line:#e5e7eb;--nav:#101214;--accent:#2457c5;--good:#176b45;--bad:#a52b2b;--amber:#8a6414}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
+.app{display:flex;min-height:100vh}.side{width:232px;background:var(--nav);color:#dfe3e8;padding:24px 16px;display:flex;flex-direction:column}.brand{padding:4px 10px 30px}.brand b{font-size:24px;letter-spacing:-.8px;color:#fff}.brand span{display:block;font-size:11px;color:#7f8791;margin-top:4px;letter-spacing:.08em;text-transform:uppercase}.nav{display:grid;gap:5px}.nav button{border:0;background:transparent;color:#aeb5bd;text-align:left;padding:11px 12px;border-radius:7px;font-size:13px;cursor:pointer}.nav button:hover,.nav button.active{background:#1d2126;color:#fff}.bottom{margin-top:auto;border-top:1px solid #292d32;padding:18px 10px 0;font-size:11px;color:#747c86;line-height:1.6}
+main{flex:1;min-width:0}.top{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px}.crumb{font-size:13px;color:var(--muted)}.crumb strong{color:var(--ink);font-weight:600}.env{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:#59616b;background:#fafafa}.wrap{max-width:1180px;margin:0 auto;padding:30px 32px 60px}.view{display:none}.view.active{display:block}.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}.head h1{font-size:25px;letter-spacing:-.5px;margin:0 0 6px}.head p{margin:0;color:var(--muted);font-size:13px}.btn{border:1px solid #d8dce1;background:#fff;border-radius:7px;padding:9px 13px;font-size:12px;font-weight:600;cursor:pointer}.btn.primary{background:#1b1e22;color:#fff;border-color:#1b1e22}.btn:hover{filter:brightness(.97)}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:9px}.metric{padding:17px 18px}.metric .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.metric .num{font-size:27px;font-weight:650;margin-top:7px;letter-spacing:-.7px}.metric .sub{font-size:11px;color:var(--muted);margin-top:5px}.ok{color:var(--good)}.danger{color:var(--bad)}
+.section{margin-top:16px}.section .title{font-size:13px;font-weight:650;margin:0 0 9px}.table{overflow:hidden}.tr{display:grid;grid-template-columns:1.4fr 1fr 1fr .9fr .7fr;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);align-items:center;font-size:12px}.tr:last-child{border-bottom:0}.th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;background:#fafafa}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px}.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:650;background:#eef7f2;color:var(--good)}.pill.warn{background:#fff6df;color:var(--amber)}.pill.bad{background:#fff0f0;color:var(--bad)}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;color:#5d646e;font-weight:600}.field input,.field textarea,.field select{font:inherit;font-size:12px;border:1px solid #d9dde2;border-radius:7px;padding:10px 11px;background:#fff;outline:none}.field textarea{min-height:94px;resize:vertical}.field input:focus,.field textarea:focus{border-color:#8ca5d8;box-shadow:0 0 0 2px #edf2fb}.actions{display:flex;gap:8px;margin-top:15px}.receipt{margin-top:18px;padding:18px}.receipt h3{margin:0 0 14px;font-size:14px}.kv{display:grid;grid-template-columns:190px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.kv:last-child{border:0}.kv .k{color:var(--muted)}
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:15px}.box{padding:18px}.box h3{font-size:14px;margin:0 0 13px}.code{background:#121417;color:#dce2e8;border-radius:7px;padding:14px;font:11px/1.7 ui-monospace,monospace;white-space:pre-wrap;word-break:break-word}.verify-result{padding:14px;border-radius:7px;margin-top:12px;background:#f2f8f4;border:1px solid #d5e9dd}.verify-result.bad{background:#fff3f3;border-color:#f0d4d4}.verify-result strong{display:block;font-size:13px;margin-bottom:5px}.muted{color:var(--muted)}.small{font-size:11px}.demo{background:#fbf8ef;border:1px solid #eee1bd;padding:12px;border-radius:7px;font-size:11px;line-height:1.55;margin-bottom:14px}.toast{position:fixed;right:22px;bottom:22px;background:#1c2025;color:#fff;padding:10px 13px;border-radius:7px;font-size:12px;opacity:0;transform:translateY(8px);transition:.2s}.toast.show{opacity:1;transform:none}
+@media(max-width:850px){.side{width:72px}.brand span,.nav button span,.bottom{display:none}.brand{padding-left:8px}.nav button{font-size:0}.nav button:before{font-size:16px}.wrap{padding:22px 16px}.grid4,.split,.formgrid{grid-template-columns:1fr}.tr{grid-template-columns:1.5fr 1fr .8fr}.tr>*:nth-child(4),.tr>*:nth-child(5){display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side">
+  <div class="brand"><b>CooL</b><span>Evidence Console</span></div>
+  <nav class="nav">
+    <button class="active" data-view="dashboard">◫ <span>Overview</span></button>
+    <button data-view="record">＋ <span>Record event</span></button>
+    <button data-view="evidence">▣ <span>Evidence</span></button>
+    <button data-view="verify">✓ <span>Verify</span></button>
+    <button data-view="tamper">⌁ <span>Tamper check</span></button>
+    <button data-view="threat">⚠ <span>Threat model</span></button>
+  </nav>
+  <div class="bottom">Local prototype<br>Evidence metadata is stored locally.<br>Sensitive payloads are temporary demo memory only.<br>Production cryptographic integrations are explicitly not implemented.</div>
+</aside>
+
+<main>
+<header class="top"><div class="crumb"><strong>CooL</strong> / <span id="crumb">Overview</span></div><div class="env">prototype environment</div></header>
+<div class="wrap">
+
+<section id="dashboard" class="view active">
+  <div class="head"><div><h1>Evidence overview</h1><p>Execution records, integrity checks and honest verification state.</p></div><button class="btn primary" onclick="showView('record')">Record an event</button></div>
+  <div class="grid4">
+    <div class="card metric"><div class="label">Evidence records</div><div class="num" id="mRecords">0</div><div class="sub">local test ledger</div></div>
+    <div class="card metric"><div class="label">SHA-256 verified</div><div class="num ok" id="mVerified">0</div><div class="sub">real commitment checks</div></div>
+    <div class="card metric"><div class="label">Commitments</div><div class="num" id="mCommits">0</div><div class="sub">SHA-256 · prototype scheme</div></div>
+    <div class="card metric"><div class="label">Altered</div><div class="num danger" id="mAltered">0</div><div class="sub">tamper demonstrations</div></div>
+  </div>
+  <div class="section"><div class="title">Verification scope</div><div class="card box">
+    <div class="status-list">
+      <div class="status-row"><b>SHA-256 commitment</b><span class="status-real">● VERIFIED</span><span class="muted">Actually recomputed in the browser.</span></div>
+      <div class="status-row"><b>Ed25519 signature</b><span class="status-demo">● NOT IMPLEMENTED / DEMO</span><span class="muted">Adapter label only; no signature verification occurs.</span></div>
+      <div class="status-row"><b>ML-DSA-65 signature</b><span class="status-demo">● NOT IMPLEMENTED / DEMO</span><span class="muted">Adapter label only; no signature verification occurs.</span></div>
+      <div class="status-row"><b>Transparency proof</b><span class="status-demo">● NOT IMPLEMENTED / DEMO</span><span class="muted">No RFC 6962 inclusion proof is checked.</span></div>
+      <div class="status-row"><b>TEE attestation</b><span class="status-demo">● NOT IMPLEMENTED / DEMO</span><span class="muted">No hardware attestation evidence is checked.</span></div>
+    </div>
+  </div></div>
+  <div class="section"><div class="title">Recent executions</div><div class="card table" id="recent"></div></div>
+  <div class="section"><div class="title">Privacy boundary</div><div class="card box"><b>Only evidence metadata + commitment are persisted.</b><p class="small muted">The sensitive payload is held only in temporary in-memory demo state and is never written to localStorage or included in exported receipts.</p></div></div>
+</section>
+
+<section id="record" class="view">
+  <div class="head"><div><h1>Record execution</h1><p>Create a receipt without persisting the sensitive payload.</p></div></div>
+  <div class="card box"><div class="formgrid">
+    <div class="field"><label>Software / model identity</label><input id="model" value="agent-prod / gpt-5.6"></div>
+    <div class="field"><label>Event type</label><select id="eventType"><option>tool.call</option><option>database.write</option><option>api.request</option><option>decision</option></select></div>
+    <div class="field"><label>Tool / target</label><input id="target" value="customer-profile API"></div>
+    <div class="field"><label>Actor</label><input id="actor" value="support-agent-07"></div>
+    <div class="field full"><label>Action metadata</label><input id="action" value="GET /customers/4821/profile"></div>
+    <div class="field full"><label>Sensitive payload (temporary demo memory — never persisted)</label><textarea id="payload">Customer lookup requested for account 4821. Return contact details needed for support verification.</textarea></div>
+  </div>
+  <div class="actions"><button class="btn primary" onclick="createRecord()">Create evidence receipt</button><button class="btn" onclick="fillExample()">Use example</button></div>
+  </div>
+  <div id="newReceipt"></div>
+</section>
+
+<section id="evidence" class="view">
+  <div class="head"><div><h1>Evidence records</h1><p>Persisted evidence metadata only. Select a record to inspect the full receipt.</p></div></div>
+  <div class="card table" id="allRecords"></div>
+  <div id="recordDetails" class="section"></div>
+</section>
+
+<section id="verify" class="view">
+  <div class="head"><div><h1>Independent verification</h1><p>Paste or upload an exported receipt. Verification uses only the receipt contents.</p></div></div>
+  <div class="split">
+    <div class="card box"><h3>External receipt</h3>
+      <textarea id="verifyInput" style="width:100%;min-height:310px;border:1px solid #d9dde2;border-radius:7px;padding:12px;font:11px ui-monospace,monospace;resize:vertical" placeholder="Paste an exported JSON evidence receipt here"></textarea>
+      <div class="actions wrap-actions"><button class="btn primary" onclick="verifyReceipt()">Verify receipt</button><button class="btn" onclick="loadLatest()">Load latest receipt</button><label class="btn">Upload JSON <input class="upload" type="file" accept=".json,application/json" onchange="loadFile(event)" hidden></label></div>
+      <p class="small muted">No dashboard record lookup is used. The verifier recomputes the commitment from receipt fields plus the temporary demo payload only when a matching demo payload is supplied. Production verification would use a documented commitment scheme that does not require exposing sensitive data.</p>
+    </div>
+    <div class="card box"><h3>Verification checks</h3><div id="checks"><div class="muted small">No receipt loaded.</div></div></div>
+  </div>
+</section>
+
+<section id="tamper" class="view">
+  <div class="head"><div><h1>Tamper check</h1><p>Change one recorded field and see exactly why the commitment stops matching.</p></div></div>
+  <div class="demo"><strong>Real demo:</strong> SHA-256 is computed by the browser. Signature, transparency and TEE integrations remain clearly marked as not implemented/demo.</div>
+  <div class="split">
+    <div class="card box"><h3>Original evidence</h3><div id="tamperOriginal" class="code">No record yet.</div></div>
+    <div class="card box"><h3>Modified evidence</h3>
+      <div class="field"><label>Action — edit this field</label><input id="tamperAction"></div>
+      <div class="actions"><button class="btn primary" onclick="runTamper()">Run tamper check</button><button class="btn" onclick="resetTamper()">Reset</button></div>
+      <div id="tamperResult"></div>
+    </div>
+  </div>
+</section>
+
+<section id="threat" class="view">
+  <div class="head"><div><h1>Threat model</h1><p>What CooL protects against — and what it does not prove.</p></div></div>
+  <div class="threat-grid">
+    <div class="threat-item"><b>✓ Modification of stored evidence</b><p class="small muted">A changed recorded field produces a different commitment, so integrity mismatch can be detected.</p></div>
+    <div class="threat-item"><b>✓ Forged execution records</b><p class="small muted">A receipt can be checked against its commitment; stronger authenticity requires the unimplemented signature layer.</p></div>
+    <div class="threat-item"><b>✓ Misattributed software identity</b><p class="small muted">Software/model identity is part of the committed evidence fields, but cryptographic identity attestation is not implemented in this prototype.</p></div>
+    <div class="threat-item"><b>△ Deletion or loss of evidence</b><p class="small muted">A commitment detects alteration but cannot by itself prove a deleted record ever existed. Durable external anchoring is needed.</p></div>
+    <div class="threat-item"><b>△ Compromised logging infrastructure</b><p class="small muted">The prototype demonstrates integrity checks, but real signatures, external transparency witnesses and hardware attestation are required for stronger independent trust.</p></div>
+    <div class="threat-item danger-box"><b>✕ Not proved by CooL</b><p class="small muted">CooL verifies evidence integrity and provenance. It does <strong>not</strong> prove an AI decision was correct, fair, safe, or appropriate.</p></div>
+  </div>
+  <div class="section"><div class="title">Prototype honesty note</div><div class="card box"><b>Implemented now:</b> browser SHA-256 commitment generation/recomputation, tamper comparison, receipt export/import, and local evidence metadata viewer.<br><br><b>Demo / not implemented:</b> Ed25519 verification, ML-DSA-65 verification, RFC 6962 inclusion/consistency verification, and TEE attestation verification.</div></div>
+</section>
+
+</div></main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY='cool_records_v2';
+const seed=[
+{id:'evt_01J8M2A4',ts:'2026-09-13T08:12:41Z',model:'agent-prod / gpt-5.6',type:'tool.call',target:'customer-profile API',actor:'support-agent-07',action:'GET /customers/4821/profile',commit:''},
+{id:'evt_01J8M19F',ts:'2026-09-13T07:58:12Z',model:'claims-agent / model-v4',type:'decision',target:'claims policy service',actor:'claims-worker-02',action:'evaluate claim CLM-88214',commit:''},
+{id:'evt_01J8M0C7',ts:'2026-09-13T07:41:05Z',model:'ops-agent / model-v3',type:'api.request',target:'inventory service',actor:'ops-agent-01',action:'POST /inventory/reserve',commit:''}
+];
+// Payloads are deliberately NOT persisted. These are temporary demo-only values.
+const demoPayloads=new Map();
+let records=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||seed.map(r=>({...r}));
+let altered=0;
+
+async function sha256(s){
+ const b=new TextEncoder().encode(s);
+ const h=await crypto.subtle.digest('SHA-256',b);
+ return [...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+function canonical(r,payload=''){
+ return JSON.stringify({model:r.model,type:r.type,target:r.target,actor:r.actor,action:r.action,payload});
+}
+async function ensureCommits(){
+ for(const r of records) if(!r.commit) r.commit=await sha256(canonical(r,''));
+ save();
+}
+function save(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(records.map(r=>({
+   id:r.id,ts:r.ts,model:r.model,type:r.type,target:r.target,actor:r.actor,action:r.action,commit:r.commit
+ }))));
+}
+function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])}
+function shortHash(h){return h?h.slice(0,16)+'…'+h.slice(-10):''}
+function receiptFor(r){
+ return {version:'cool-0.2-demo',event_id:r.id,timestamp:r.ts,software:r.model,event_type:r.type,target:r.target,actor:r.actor,action:r.action,
+ payload_commitment:{algorithm:'SHA-256',scheme:'direct-canonical-json-demo-v1',value:r.commit},
+ signatures:{ed25519:{status:'not_implemented_demo'},mldsa65:{status:'not_implemented_demo'}},
+ transparency:{status:'not_implemented_demo',protocol:'RFC 6962'},
+ attestation:{status:'not_implemented_demo',provider:'Phala dstack / Intel TDX'},
+ verification_scope:{sha256_commitment:'implemented',signatures:'not_implemented',transparency:'not_implemented',tee_attestation:'not_implemented'},
+ privacy_note:'Sensitive payload is not included in this receipt and is not persisted by the prototype.'
+ };
+}
+function receiptHTML(r){
+ const receipt=receiptFor(r);
+ return `<div class="card receipt"><h3>Evidence receipt <span class="pill" style="float:right">● SHA-256 verified</span></h3>
+ ${[['Event ID',r.id],['Recorded at',r.ts],['Software / model',r.model],['Event',r.type],['Target',r.target],['Actor',r.actor],['Action',r.action],['Commitment','SHA-256 · '+r.commit]].map(x=>`<div class="kv"><div class="k">${x[0]}</div><div class="mono">${esc(x[1])}</div></div>`).join('')}
+ <div class="section"><div class="title">Security status</div><div class="status-list">
+ <div class="status-row"><b>SHA-256 commitment</b><span class="status-real">VERIFIED</span><span class="muted">Real browser recomputation.</span></div>
+ <div class="status-row"><b>Ed25519</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span class="muted">No cryptographic verification.</span></div>
+ <div class="status-row"><b>ML-DSA-65</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span class="muted">No cryptographic verification.</span></div>
+ <div class="status-row"><b>Transparency proof</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span class="muted">No inclusion proof verification.</span></div>
+ <div class="status-row"><b>TEE attestation</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span class="muted">No attestation verification.</span></div>
+ </div></div>
+ <div class="actions wrap-actions"><button class="btn" onclick='copyReceipt(${JSON.stringify(JSON.stringify(receipt))})'>Copy receipt JSON</button><button class="btn" onclick='downloadReceipt(${JSON.stringify(JSON.stringify(receipt))})'>Export JSON</button><button class="btn" onclick="showView('verify');setTimeout(loadLatest,50)">Open verifier</button></div></div>`;
+}
+function render(){
+ const rows=records.map(r=>`<div class="tr"><div><b>${esc(r.action)}</b><div class="muted mono">${esc(r.id)}</div></div><div>${esc(r.model)}</div><div>${esc(r.type)}</div><div>${esc(r.target)}</div><div><span class="pill">● SHA-256 verified</span></div></div>`).join('');
+ const head='<div class="tr th"><div>Action / ID</div><div>Model</div><div>Event</div><div>Target</div><div>State</div></div>';
+ document.getElementById('recent').innerHTML=head+rows.slice(0,5);
+ document.getElementById('allRecords').innerHTML=head+records.map(r=>`<div class="tr"><div><b>${esc(r.action)}</b><div class="muted mono">${esc(r.id)}</div></div><div>${esc(r.model)}</div><div>${esc(r.type)}</div><div>${esc(r.target)}</div><div><button class="btn" onclick="viewDetails('${r.id}')">View details</button></div></div>`).join('');
+ document.getElementById('mRecords').textContent=records.length;
+ document.getElementById('mVerified').textContent=records.length;
+ document.getElementById('mCommits').textContent=records.length;
+ document.getElementById('mAltered').textContent=altered;
+ if(records[0]){
+   document.getElementById('tamperOriginal').textContent=JSON.stringify({event_id:records[0].id,model:records[0].model,type:records[0].type,target:records[0].target,actor:records[0].actor,action:records[0].action,commitment:records[0].commit},null,2);
+   document.getElementById('tamperAction').value=records[0].action;
+ }
+}
+function viewDetails(id){
+ const r=records.find(x=>x.id===id); if(!r)return;
+ const receipt=receiptFor(r);
+ document.getElementById('recordDetails').innerHTML=`<div class="card box">
+ <div class="head" style="margin-bottom:12px"><div><h3 style="margin:0">Record details</h3><p>${esc(r.id)}</p></div><button class="btn" onclick="document.getElementById('recordDetails').innerHTML=''">Close</button></div>
+ <div class="detail-grid">${[['Event ID',r.id],['Timestamp',r.ts],['Software / model',r.model],['Event type',r.type],['Target',r.target],['Actor',r.actor],['Action',r.action],['Commitment algorithm',r.commit? 'SHA-256':'—'],['Commitment value',r.commit],['Persistence','Metadata + commitment only']].map((x,i)=>`<div class="${i===8?'full':''}"><div class="small muted">${x[0]}</div><div class="mono" style="margin-top:4px">${esc(x[1])}</div></div>`).join('')}</div>
+ <div class="section"><div class="title">Verification status</div>${receiptStatusHTML()}</div>
+ <div class="section"><div class="title">Receipt JSON</div><div class="code receipt-json">${esc(JSON.stringify(receipt,null,2))}</div></div>
+ <div class="actions"><button class="btn" onclick='copyReceipt(${JSON.stringify(JSON.stringify(receipt))})'>Copy</button><button class="btn" onclick='downloadReceipt(${JSON.stringify(JSON.stringify(receipt))})'>Export JSON</button></div>
+ </div>`;
+}
+function receiptStatusHTML(){return `<div class="status-list"><div class="status-row"><b>SHA-256 commitment</b><span class="status-real">VERIFIED</span><span>Real browser check.</span></div><div class="status-row"><b>Ed25519 signature</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span>No signature verification.</span></div><div class="status-row"><b>ML-DSA-65 signature</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span>No signature verification.</span></div><div class="status-row"><b>Transparency proof</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span>No proof verification.</span></div><div class="status-row"><b>TEE attestation</b><span class="status-demo">NOT IMPLEMENTED / DEMO</span><span>No attestation verification.</span></div></div>`}
+function showView(v){
+ document.querySelectorAll('.view').forEach(x=>x.classList.remove('active')); document.getElementById(v).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.view===v));
+ document.getElementById('crumb').textContent={dashboard:'Overview',record:'Record event',evidence:'Evidence',verify:'Verify',tamper:'Tamper check',threat:'Threat model'}[v]||v; render();
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2200)}
+function fillExample(){document.getElementById('model').value='agent-prod / gpt-5.6';document.getElementById('eventType').value='tool.call';document.getElementById('target').value='customer-profile API';document.getElementById('actor').value='support-agent-07';document.getElementById('action').value='GET /customers/4821/profile';document.getElementById('payload').value='Customer lookup requested for account 4821. Return contact details needed for support verification.'}
+async function createRecord(){
+ const model=document.getElementById('model').value.trim(),type=document.getElementById('eventType').value,target=document.getElementById('target').value.trim(),actor=document.getElementById('actor').value.trim(),action=document.getElementById('action').value.trim(),payload=document.getElementById('payload').value;
+ if(!model||!action){toast('Model and action are required');return}
+ const r={id:'evt_'+crypto.randomUUID().slice(0,8).toUpperCase(),ts:new Date().toISOString(),model,type,target,actor,action,commit:''};
+ r.commit=await sha256(canonical(r,payload));
+ // Keep sensitive payload only in this page's in-memory Map. Never localStorage.
+ demoPayloads.set(r.id,payload);
+ records.unshift(r);save();document.getElementById('newReceipt').innerHTML=receiptHTML(r);toast('Evidence receipt created');render();
+}
+function copyReceipt(s){navigator.clipboard?.writeText(s);toast('Receipt JSON copied')}
+function downloadReceipt(s){
+ const blob=new Blob([s],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='cool-evidence-receipt.json';a.click();URL.revokeObjectURL(url);toast('Receipt exported');
+}
+function loadLatest(){if(!records[0])return;document.getElementById('verifyInput').value=JSON.stringify(receiptFor(records[0]),null,2)}
+async function verifyReceipt(){
+ let r;try{r=JSON.parse(document.getElementById('verifyInput').value)}catch(e){document.getElementById('checks').innerHTML='<div class="verify-result bad"><strong>INVALID RECEIPT</strong><span class="small">JSON could not be parsed.</span></div>';return}
+ if(!r.payload_commitment?.value){document.getElementById('checks').innerHTML='<div class="verify-result bad"><strong>INVALID RECEIPT</strong><span class="small">Missing SHA-256 commitment.</span></div>';return}
+ // For a genuinely external receipt, the sensitive payload is not available, so we do not invent a successful match.
+ const demoPayload = demoPayloads.get(r.event_id);
+ let ok=false, note='The receipt contains no sensitive payload, so this independent verifier cannot recompute this direct-hash demo commitment without the original secret input.';
+ if(demoPayload!==undefined){
+   const base={model:r.software,type:r.event_type,target:r.target,actor:r.actor,action:r.action};
+   const actual=await sha256(JSON.stringify({...base,payload:demoPayload}));
+   ok=actual===r.payload_commitment.value;
+   note=ok?'The receipt reproduces the SHA-256 commitment using temporary demo memory; the verifier did not consult the persisted dashboard record.':'The supplied receipt fields do not reproduce the stored commitment.';
+ }
+ document.getElementById('checks').innerHTML=`<div class="verify-result ${ok?'':'bad'}"><strong>${ok?'SHA-256 VERIFIED':'SHA-256 NOT VERIFIED IN THIS RECEIPT-ONLY CONTEXT'}</strong><span class="small">${esc(note)}</span></div><div style="margin-top:12px">${[
+ ['SHA-256 commitment',ok?'verified':'not independently recomputed'],
+ ['Ed25519 signature','not implemented / demo'],
+ ['ML-DSA-65 signature','not implemented / demo'],
+ ['Transparency proof','not implemented / demo'],
+ ['TEE attestation','not implemented / demo']
+ ].map(x=>`<div class="kv"><div class="k">${x[0]}</div><div class="${x[1]==='verified'?'ok':''}">${x[1]}</div></div>`).join('')}</div>`;
+}
+function loadFile(event){const f=event.target.files?.[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{document.getElementById('verifyInput').value=rd.result;toast('Receipt loaded from file')};rd.readAsText(f)}
+async function runTamper(){
+ if(!records[0])return;
+ const r=records[0],changed=document.getElementById('tamperAction').value;
+ const actual=await sha256(canonical(r,demoPayloads.get(r.id)||''));
+ // Build the modified commitment with the changed action.
+ const modified={...r,action:changed};
+ const newHash=await sha256(canonical(modified,demoPayloads.get(r.id)||''));
+ const ok=newHash===r.commit;if(!ok)altered=1;
+ document.getElementById('tamperResult').innerHTML=`<div class="verify-result ${ok?'':'bad'}">
+ <strong>${ok?'UNCHANGED':'TAMPERING DETECTED'}</strong>
+ <span class="small">${ok?'The action is identical to the original.':'The action field changed, so the canonical evidence input changed and SHA-256 produced a different commitment.'}</span>
+ <div class="diff-grid" style="margin-top:14px">
+   <div><div class="diff-label">Original action</div><div class="code">${esc(r.action)}</div></div>
+   <div><div class="diff-label">Modified action</div><div class="code">${esc(changed)}</div></div>
+ </div>
+ <div class="section"><div class="diff-label">Changed field</div><div><span class="changed">action</span></div></div>
+ <div class="section"><div class="diff-label">Hash comparison</div><div class="code">original: ${r.commit}<br>new:      ${newHash}</div></div>
+ <p class="small"><b>Why it fails:</b> SHA-256 is sensitive to input changes. Even a one-field modification changes the commitment, so the modified evidence no longer matches the original recorded commitment.</p>
+ </div>`;
+ render();
+}
+function resetTamper(){if(!records[0])return;document.getElementById('tamperAction').value=records[0].action;document.getElementById('tamperResult').innerHTML='';altered=0;render();toast('Tamper demo reset')}
+ensureCommits().then(render);
+</script>
+</body></html>
